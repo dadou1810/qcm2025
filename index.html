@@ -26,7 +26,8 @@
     function setTheme(theme) {
       selectedTheme = theme;
       document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('selected'));
-      document.getElementById(`btn-${theme}`).classList.add('selected');
+      const btn = document.getElementById(`btn-${theme}`);
+      if (btn) btn.classList.add('selected');
     }
 
     async function addAnswer() {
@@ -34,7 +35,7 @@
       const answer = document.getElementById("answerInput").value.trim().toUpperCase();
 
       if (!selectedTheme) {
-        alert("Veuillez sélectionner un thème.");
+        alert("Veuillez sélectionner un thème avant d’ajouter la question.");
         return;
       }
 
@@ -67,7 +68,6 @@
     async function resetSearch() {
       document.getElementById("searchInput").value = '';
       document.getElementById("resultDisplay").innerHTML = 'Résultat ici...';
-
       dataStore.length = 0;
       const snapshot = await getDocs(answersRef);
       snapshot.forEach(doc => {
@@ -116,19 +116,29 @@
       color: white;
       font-weight: bold;
       cursor: pointer;
+      border: none;
     }
     button#resetBtn {
       background-color: #e74c3c;
     }
+
+    .theme-selection {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
     .theme-selection button {
-      width: 32%;
+      flex: 1;
       background-color: #3498db;
       color: white;
-      margin: 0.25rem 0.5%;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-weight: bold;
     }
     .theme-selection .selected {
       background-color: #1abc9c !important;
     }
+
     .result {
       margin-top: 1rem;
       padding: 1rem;
