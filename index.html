@@ -2,60 +2,105 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Réponses QCM Live</title>
+  <title>QCM partagé - EER2025</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyByANK7_BEqz8_TAg0MpJzKT0KC1IJweYc",
+  authDomain: "qcm2025-6486f.firebaseapp.com",
+  projectId: "qcm2025-6486f",
+  storageBucket: "qcm2025-6486f.firebasestorage.app",
+  messagingSenderId: "710698168472",
+  appId: "1:710698168472:web:b50630cb5c0ea686d560ed"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const answersRef = collection(db, "answers");
+
+    async function addAnswer() {
+      const question = document.getElementById("questionInput").value.trim();
+      const answer = document.getElementById("answerInput").value.trim().toUpperCase();
+      if (question && answer) {
+        await addDoc(answersRef, { question, answer });
+        document.getElementById("questionInput").value = '';
+        document.getElementById("answerInput").value = '';
+        alert("Réponse enregistrée !");
+      }
+    }
+
+    function searchAnswer(query, data) {
+      const results = data.filter(doc =>
+        doc.question.toLowerCase().includes(query.toLowerCase())
+      );
+      const display = document.getElementById("resultDisplay");
+      if (results.length > 0) {
+        display.innerHTML = `<strong>Question :</strong><br>${results[0].question}<br><strong>Réponse :</strong> ${results[0].answer}`;
+      } else {
+        display.innerHTML = "Aucune correspondance trouvée.";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const dataStore = [];
+
+      document.getElementById("addBtn").onclick = addAnswer;
+      document.getElementById("searchInput").oninput = (e) => {
+        searchAnswer(e.target.value, dataStore);
+      };
+
+      onSnapshot(answersRef, snapshot => {
+        dataStore.length = 0;
+        snapshot.forEach(doc => {
+          dataStore.push(doc.data());
+        });
+      });
+    });
+  </script>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 2rem;
+      background-color: #f9f9f9;
     }
-    input, textarea {
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    input, textarea, button {
       width: 100%;
       margin: 0.5rem 0;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #2ecc71;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
     }
     .result {
       margin-top: 1rem;
-      padding: 0.5rem;
-      background: #f0f0f0;
+      padding: 1rem;
+      background: #ecf0f1;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
+  <h1>QCM - Équipe EER2025</h1>
 
   <h2>Ajouter une réponse</h2>
-  <textarea id="questionInput" placeholder="Copier ici la question exacte..."></textarea>
-  <input type="text" id="answerInput" placeholder="Réponse (ex: A, B, C...)">
-  <button onclick="addAnswer()">Ajouter</button>
+  <textarea id="questionInput" placeholder="Copiez ici la question exacte..."></textarea>
+  <input type="text" id="answerInput" placeholder="Réponse (ex: A, B, C...)" maxlength="1">
+  <button id="addBtn">Ajouter</button>
 
   <h2>Rechercher une question</h2>
-  <input type="text" id="searchInput" placeholder="Tapez une partie de la question..." oninput="searchAnswer()">
+  <input type="text" id="searchInput" placeholder="Tapez une partie de la question...">
   <div class="result" id="resultDisplay">Résultat ici...</div>
-
-  <script>
-    const answers = {};
-
-    function addAnswer() {
-      const question = document.getElementById("questionInput").value.trim();
-      const answer = document.getElementById("answerInput").value.trim().toUpperCase();
-      if (question && answer) {
-        answers[question] = answer;
-        alert("Réponse ajoutée !");
-        document.getElementById("questionInput").value = '';
-        document.getElementById("answerInput").value = '';
-      }
-    }
-
-    function searchAnswer() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      let found = "Aucune correspondance.";
-      for (const q in answers) {
-        if (q.toLowerCase().includes(query)) {
-          found = `<strong>Question :</strong> ${q}<br><strong>Réponse :</strong> ${answers[q]}`;
-          break;
-        }
-      }
-      document.getElementById("resultDisplay").innerHTML = found;
-    }
-  </script>
-
 </body>
 </html>
