@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Réponses QCM Live</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    .result {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Ajouter une réponse</h2>
+  <textarea id="questionInput" placeholder="Copier ici la question exacte..."></textarea>
+  <input type="text" id="answerInput" placeholder="Réponse (ex: A, B, C...)">
+  <button onclick="addAnswer()">Ajouter</button>
+
+  <h2>Rechercher une question</h2>
+  <input type="text" id="searchInput" placeholder="Tapez une partie de la question..." oninput="searchAnswer()">
+  <div class="result" id="resultDisplay">Résultat ici...</div>
+
+  <script>
+    const answers = {};
+
+    function addAnswer() {
+      const question = document.getElementById("questionInput").value.trim();
+      const answer = document.getElementById("answerInput").value.trim().toUpperCase();
+      if (question && answer) {
+        answers[question] = answer;
+        alert("Réponse ajoutée !");
+        document.getElementById("questionInput").value = '';
+        document.getElementById("answerInput").value = '';
+      }
+    }
+
+    function searchAnswer() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      let found = "Aucune correspondance.";
+      for (const q in answers) {
+        if (q.toLowerCase().includes(query)) {
+          found = `<strong>Question :</strong> ${q}<br><strong>Réponse :</strong> ${answers[q]}`;
+          break;
+        }
+      }
+      document.getElementById("resultDisplay").innerHTML = found;
+    }
+  </script>
+
+</body>
+</html>
