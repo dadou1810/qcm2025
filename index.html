@@ -5,16 +5,17 @@
   <title>QCM partagé - EER2025</title>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    // ✅ Ta configuration Firebase personnalisée
     const firebaseConfig = {
-  apiKey: "AIzaSyByANK7_BEqz8_TAg0MpJzKT0KC1IJweYc",
-  authDomain: "qcm2025-6486f.firebaseapp.com",
-  projectId: "qcm2025-6486f",
-  storageBucket: "qcm2025-6486f.firebasestorage.app",
-  messagingSenderId: "710698168472",
-  appId: "1:710698168472:web:b50630cb5c0ea686d560ed"
-};
+      apiKey: "AIzaSyByANK7_BEqz8_TAg0MpJzKT0KC1IJweYc",
+      authDomain: "qcm2025-6486f.firebaseapp.com",
+      projectId: "qcm2025-6486f",
+      storageBucket: "qcm2025-6486f.firebasestorage.app",
+      messagingSenderId: "710698168472",
+      appId: "1:710698168472:web:b50630cb5c0ea686d560ed"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -43,6 +44,11 @@
       }
     }
 
+    function resetSearch() {
+      document.getElementById("searchInput").value = '';
+      document.getElementById("resultDisplay").innerHTML = 'Résultat ici...';
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       const dataStore = [];
 
@@ -50,6 +56,7 @@
       document.getElementById("searchInput").oninput = (e) => {
         searchAnswer(e.target.value, dataStore);
       };
+      document.getElementById("resetBtn").onclick = resetSearch;
 
       onSnapshot(answersRef, snapshot => {
         dataStore.length = 0;
@@ -83,6 +90,9 @@
       font-weight: bold;
       cursor: pointer;
     }
+    button#resetBtn {
+      background-color: #e74c3c;
+    }
     .result {
       margin-top: 1rem;
       padding: 1rem;
@@ -101,6 +111,8 @@
 
   <h2>Rechercher une question</h2>
   <input type="text" id="searchInput" placeholder="Tapez une partie de la question...">
+  <button id="resetBtn">Réinitialiser la recherche</button>
+
   <div class="result" id="resultDisplay">Résultat ici...</div>
 </body>
 </html>
