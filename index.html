@@ -39,7 +39,12 @@
       );
       const display = document.getElementById("resultDisplay");
       if (results.length > 0) {
-        display.innerHTML = `<strong>Question :</strong><br>${results[0].question}<br><strong>Réponse :</strong> ${results[0].answer}`;
+        display.innerHTML = results.map((doc, index) => `
+          <div>
+            <strong>Question ${index + 1} :</strong><br>${doc.question}<br>
+            <strong>Réponse :</strong> ${doc.answer}
+          </div><hr>
+        `).join('');
       } else {
         display.innerHTML = "Aucune correspondance trouvée.";
       }
@@ -49,7 +54,7 @@
       document.getElementById("searchInput").value = '';
       document.getElementById("resultDisplay").innerHTML = 'Résultat ici...';
 
-      // Recharge la base complète depuis Firebase
+      // Recharge les données depuis Firebase
       dataStore.length = 0;
       const snapshot = await getDocs(answersRef);
       snapshot.forEach(doc => {
@@ -62,7 +67,7 @@
       document.getElementById("searchInput").oninput = e => searchAnswer(e.target.value);
       document.getElementById("resetBtn").onclick = resetSearch;
 
-      // Synchronisation en temps réel (mise à jour automatique de dataStore)
+      // Synchronisation en temps réel
       onSnapshot(answersRef, snapshot => {
         dataStore.length = 0;
         snapshot.forEach(doc => {
@@ -105,6 +110,9 @@
       background: #ecf0f1;
       border-radius: 8px;
       min-height: 2.5rem;
+    }
+    .result div {
+      margin-bottom: 1rem;
     }
   </style>
 </head>
